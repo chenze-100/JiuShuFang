@@ -1,0 +1,147 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: cloud-gateway
+  # 网关无数据库，cloud-common 传递进来的 JDBC 依赖会触发 DataSource 装配，这里排除
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+  cloud:
+    gateway:
+      # 注意：Spring Cloud Gateway 4.3 起旧前缀 spring.cloud.gateway.* 已废弃，
+      # 新前缀为 spring.cloud.gateway.server.webflux.*（WebFlux 版网关）
+      server:
+        webflux:
+          # 全局跨域：前端 dev server(3000) / 生产域名都要能直连网关
+          # allowCredentials=true 时不能用 allowedOrigins:"*"，只能用 allowedOriginPatterns
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOriginPatterns: "*"
+                allowedMethods: "*"
+                allowedHeaders: "*"
+                exposedHeaders: "*"
+                allowCredentials: true
+                maxAge: 3600
+          # 自动发现 Nacos 注册的服务（服务名即路径前缀）
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+          # 全局默认过滤器
+          default-filters:
+            - AddResponseHeader=X-Served-By, JiuShuFang-Gateway
+          # 手动路由：按「业务前缀」分流（与前端 request.js 的裸路径一一对应，order 小的优先）
+          routes:
+            # ============ 登录 / 验证码：按 IP 限流，最严格，防撞库 ============
+            - id: cloud-user-login
+              uri: lb://cloud-user
+              order: -10
+              predicates:
+                - Path=/api/user/login/**,/api/code/**
+              filters:
+                - StripPrefix=1
+                - name: RequestRateLimiter
+                  args:
+                    key-resolver: "#{@ipKeyResolver}"
+                    redis-rate-limiter.replenishRate: 2
+                    redis-rate-limiter.burstCapacity: 5
+                    redis-rate-limiter.requestedTokens: 1
+            # ============ cloud-user：/api/user/** 按用户 ID 限流 ============
+            - id: cloud-user
+              uri: lb://cloud-user
+              predicates:
+                - Path=/api/user/**
+              filters:
+                - StripPrefix=1
+                - name: RequestRateLimiter
+                  args:
+                    key-resolver: "#{@userKeyResolver}"
+                    redis-rate-limiter.replenishRate: 20
+                    redis-rate-limiter.burstCapacity: 40
+                    redis-rate-limiter.requestedTokens: 1
+            # ============ cloud-goods：商品域全部业务前缀 ============
+            - id: cloud-goods
+              uri: lb://cloud-goods
+              predicates:
+                - Path=/api/goods/**,/api/category/**,/api/collect/**,/api/comment/**,/api/history/**,/api/image/**,/api/shop/**,/api/shopping-cart/**
+              filters:
+                - StripPrefix=1
+            # ============ cloud-trade：交易域全部业务前缀（挂熔断器防雪崩） ============
+            - id: cloud-trade
+              uri: lb://cloud-trade
+              predicates:
+                - Path=/api/order/**,/api/order-item/**,/api/address/**,/api/pay/**,/api/pay-order/**,/api/pay-record/**,/api/pay-refund/**,/api/seckill/**
+              filters:
+                - StripPrefix=1
+                - name: CircuitBreaker
+                  args:
+                    name: tradeCB
+                    fallbackUri: forward:/fallback/trade
+            # ============ cloud-ai：AI 域全部业务前缀，按用户 ID 限流 ============
+            - id: cloud-ai
+              uri: lb://cloud-ai
+              predicates:
+                - Path=/api/ai/**,/api/capture/**,/api/chat/**,/api/chat-list/**,/api/chat-memory/**,/api/embedding/**
+              filters:
+                - StripPrefix=1
+                - name: RequestRateLimiter
+                  args:
+                    key-resolver: "#{@userKeyResolver}"
+                    redis-rate-limiter.replenishRate: 5
+                    redis-rate-limiter.burstCapacity: 10
+                    redis-rate-limiter.requestedTokens: 1
+            # ============ cloud-ai WebSocket：/chat/{userId} 直连，无 StripPrefix（后端 @ServerEndpoint("/chat/{sessionUid}")） ============
+            - id: cloud-ai-ws
+              uri: lb:ws://cloud-ai
+              predicates:
+                - Path=/chat/**
+              # 不加 StripPrefix：后端端点路径就是 /chat/{sessionUid}
+              # 注意：浏览器无法给 WebSocket 加 Authorization 头，需把 /chat/** 加入鉴权白名单
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+        namespace: ${NACOS_NS:public}
+      config:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+        namespace: ${NACOS_NS:public}
+        file-extension: yaml
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ${REDIS_PASSWORD:123}
+
+# Resilience4j 熔断降级配置
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 20
+        minimum-number-of-calls: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 5
+    instances:
+      tradeCB:
+        base-config: default
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 5s
+    instances:
+      tradeCB:
+        base-config: default
+
+# JWT 配置
+jwt:
+  secret: ${JWT_SECRET:localDevSecretKeyForJiuShuFangGateway0123456789abcdef}
+  expire: 86400000
+
+# 白名单：@Value 注入 List 只认逗号分隔字符串；完整清单在 application-local.yaml（已 git 忽略）
+# 注意：这里必须是前端真实调用的路径（/api 前缀），登录相关必须放行，否则永远登不进去
+auth:
+  whitelist: ${AUTH_WHITELIST:/api/code/**,/api/capture/**,/api/user/login/**,/api/user/wx/**,/api/user/check,/api/goods/list,/api/category/**,/chat/**,/error}

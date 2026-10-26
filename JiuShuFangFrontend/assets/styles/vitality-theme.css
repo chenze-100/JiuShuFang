@@ -1,0 +1,170 @@
+:root {
+  /* 主色调 */
+  --banana-yellow: #FFE135;
+  --deep-yellow: #FFC107;
+  --light-yellow: #FFF8DC;
+  
+  /* 辅助色 */
+  --pure-white: #FFFFFF;
+  --light-gray: #F5F5F5;
+  --border-gray: #E0E0E0;
+  
+  /* 点缀色 */
+  --coral-red: #FF6B6B;
+  --mint-green: #4ECDC4;
+  --sky-blue: #87CEEB;
+  
+  /* 文字颜色 */
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-hint: #999999;
+  
+  /* 按钮 */
+  --button-gradient: linear-gradient(135deg, #FFE135, #FFC107);
+  
+  /* 背景渐变 */
+  --background-gradient: linear-gradient(135deg, #FFF8DC, #FFFFFF);
+  
+  /* 阴影 */
+  --card-shadow: 0 20px 60px rgba(255, 225, 53, 0.3);
+  --input-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --button-shadow: 0 8px 24px rgba(255, 225, 53, 0.4);
+}
+
+/* 动画关键帧 */
+@keyframes breathe {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-up {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes attention-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+@keyframes star-twinkle {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(0.5);
+  }
+}
+
+/* 通用样式类 */
+.vitality-input {
+  background: var(--pure-white);
+  border: 2px solid var(--border-gray);
+  border-radius: 15px;
+  padding: 12px 16px;
+  transition: all 0.3s ease;
+  box-shadow: var(--input-shadow);
+}
+
+.vitality-input:focus {
+  border-color: var(--banana-yellow);
+  transform: scale(1.02);
+  box-shadow: 0 0 0 3px rgba(255, 225, 53, 0.2);
+}
+
+.vitality-button {
+  background: var(--button-gradient);
+  color: var(--pure-white);
+  border: none;
+  border-radius: 25px;
+  padding: 12px 32px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--button-shadow);
+  animation: attention-bounce 2s ease-in-out infinite;
+}
+
+.vitality-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 32px rgba(255, 225, 53, 0.6);
+}
+
+.vitality-button:active {
+  transform: scale(0.98);
+}

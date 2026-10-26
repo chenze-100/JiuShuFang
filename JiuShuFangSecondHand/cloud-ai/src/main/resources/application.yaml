@@ -1,0 +1,65 @@
+# ==== 本地可独立运行配置（Nacos 不可用时降级） ====
+server:
+  port: 8089
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3308/zhi-yue?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf8&serverTimezone=GMT%2B8&rewriteBatchedStatements=true&nullCatalogMeansCurrent=true&allowMultiQueries=true
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:123456}
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ${REDIS_PASSWORD:123}
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    virtual-host: /
+    publisher-confirm-type: simple
+  ai:
+    dashscope:
+      api-key: ${DASHSCOPE_API_KEY:sk-在这里填入你的API-Key}
+      chat:
+        options:
+          model: qwen3.8-27b
+      embedding:
+        enabled: true
+        options:
+          model: text-embedding-v2
+          dimensions: 1536
+    vectorstore:
+      milvus:
+        client:
+          host: localhost
+          port: 19530
+          username: ""
+          password: ""
+        databaseName: default
+        collectionName: zhiyue_embeddings
+        embeddingDimension: 1536
+        indexType: HNSW
+        indexParameters: '{"M":16,"efConstruction":128}'
+        metricType: COSINE
+        initialize-schema: true
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# JWT
+jwt:
+  secret: ${JWT_SECRET:localDevSecretKeyForJiuShuFangGateway0123456789abcdef}
+  expire: 86400000
+
+# Knife4j
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+knife4j:
+  enable: true

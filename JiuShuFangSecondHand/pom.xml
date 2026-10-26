@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ==================== Spring Boot Parent ==================== -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.5</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com</groupId>
+    <artifactId>JiuShuFangCloud</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>JiuShuFangCloud</name>
+    <description>旧书坊 - Spring Cloud 微服务架构</description>
+
+    <!-- ==================== 子模块 ==================== -->
+    <modules>
+        <module>cloud-common</module>
+        <module>cloud-gateway</module>
+        <module>cloud-user</module>
+        <module>cloud-goods</module>
+        <module>cloud-trade</module>
+        <module>cloud-ai</module>
+    </modules>
+
+    <!-- ==================== 版本属性 ==================== -->
+    <properties>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Spring Cloud / Alibaba -->
+        <!-- Spring Boot 3.5.x → Spring Cloud 2025.0.x (Northfields) -->
+        <!-- Spring Cloud Alibaba 2025.0.0.0 对应 Spring Cloud 2025.0.x -->
+        <spring-cloud.version>2025.0.0</spring-cloud.version>
+        <spring-cloud-alibaba.version>2025.0.0.0</spring-cloud-alibaba.version>
+
+        <!-- 原有业务依赖版本 -->
+        <mybatis-plus.version>3.5.5</mybatis-plus.version>
+        <jjwt.version>0.11.5</jjwt.version>
+        <hutool.version>5.8.34</hutool.version>
+        <jedis.version>7.2.0</jedis.version>
+        <minio.version>8.5.2</minio.version>
+        <alipay.version>4.40.734.ALL</alipay.version>
+        <okhttp.version>4.10.0</okhttp.version>
+        <easy-captcha.version>1.6.2</easy-captcha.version>
+        <aliyun-sms.version>2.0.24</aliyun-sms.version>
+        <core.version>3.3.3</core.version>
+        <jsonschema.version>4.38.0</jsonschema.version>
+        <spring-ai.version>1.1.2</spring-ai.version>
+        <spring-ai-alibaba.version>1.1.2.0</spring-ai-alibaba.version>
+        <knife4j.version>4.5.0</knife4j.version>
+    </properties>
+
+    <!-- ==================== BOM 统一版本管理 ==================== -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring Cloud BOM -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Spring Cloud Alibaba BOM -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring AI BOM -->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Spring AI Alibaba BOM -->
+            <dependency>
+                <groupId>com.alibaba.cloud.ai</groupId>
+                <artifactId>spring-ai-alibaba-bom</artifactId>
+                <version>${spring-ai-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- 自研公共模块 -->
+            <dependency>
+                <groupId>com</groupId>
+                <artifactId>cloud-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- MyBatis-Plus -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <!-- Knife4j -->
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+            <!-- JJWT -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <!-- Hutool -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <!-- Jedis -->
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
+            </dependency>
+            <!-- MinIO -->
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
+            </dependency>
+            <!-- 支付宝 -->
+            <dependency>
+                <groupId>com.alipay.sdk</groupId>
+                <artifactId>alipay-sdk-java</artifactId>
+                <version>${alipay.version}</version>
+            </dependency>
+            <!-- 阿里云短信 -->
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>dysmsapi20170525</artifactId>
+                <version>${aliyun-sms.version}</version>
+            </dependency>
+            <!-- OkHttp -->
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>logging-interceptor</artifactId>
+                <version>${okhttp.version}</version>
+            </dependency>
+            <!-- 验证码 -->
+            <dependency>
+                <groupId>com.github.whvcse</groupId>
+                <artifactId>easy-captcha</artifactId>
+                <version>${easy-captcha.version}</version>
+            </dependency>
+            <!-- 二维码 -->
+            <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>core</artifactId>
+                <version>${core.version}</version>
+            </dependency>
+            <!-- JSON Schema -->
+            <dependency>
+                <groupId>com.github.victools</groupId>
+                <artifactId>jsonschema-generator</artifactId>
+                <version>${jsonschema.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.victools</groupId>
+                <artifactId>jsonschema-module-jackson</artifactId>
+                <version>${jsonschema.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.victools</groupId>
+                <artifactId>jsonschema-module-swagger-2</artifactId>
+                <version>${jsonschema.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- ==================== 公共依赖（所有子模块继承） ==================== -->
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

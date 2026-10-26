@@ -1,0 +1,50 @@
+# ==== 本地可独立运行配置（Nacos 不可用时降级） ====
+# 不设 context-path：网关按业务前缀路由（/api/goods/**、/api/category/** 等），
+# StripPrefix=1 去掉 /api 后的路径直接对应各 Controller 的 @RequestMapping
+server:
+  port: 8082
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3308/zhi-yue?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf8&serverTimezone=GMT%2B8&rewriteBatchedStatements=true&nullCatalogMeansCurrent=true&allowMultiQueries=true
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:123456}
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ${REDIS_PASSWORD:123}
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    virtual-host: /
+    publisher-confirm-type: simple
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# JWT
+jwt:
+  secret: ${JWT_SECRET:localDevSecretKeyForJiuShuFangGateway0123456789abcdef}
+  expire: 86400000
+
+# MinIO 图片对象存储
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+  access-key: ${MINIO_ACCESS_KEY:minioadmin}
+  secret-key: ${MINIO_SECRET_KEY:minioadmin}
+  bucket: ${MINIO_BUCKET:zhiyue}
+  read-path: ${MINIO_READ_PATH:http://localhost:9000/zhiyue}
+
+# Knife4j
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+knife4j:
+  enable: true

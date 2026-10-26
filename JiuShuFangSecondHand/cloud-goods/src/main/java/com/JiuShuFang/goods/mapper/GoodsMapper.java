@@ -1,0 +1,15 @@
+package com.JiuShuFang.goods.mapper;
+
+import com.JiuShuFang.goods.domain.pojo.Goods;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+/**
+ * <p>
+ * 商品表（二手书） Mapper 接口
+ * </p>
+ *
+ * @since 2026-04-09
+ */
+public interface GoodsMapper extends BaseMapper<Goods> {
+
+}

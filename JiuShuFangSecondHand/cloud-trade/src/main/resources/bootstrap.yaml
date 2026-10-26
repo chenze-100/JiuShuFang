@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: cloud-trade
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+        namespace: ${NACOS_NS:public}
+      config:
+        server-addr: ${NACOS_ADDR:localhost:8848}
+        namespace: ${NACOS_NS:public}
+        file-extension: yaml

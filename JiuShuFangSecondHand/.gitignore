@@ -1,0 +1,56 @@
+# ==============================
+# Java / Maven / Gradle 通用忽略
+# ==============================
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ==============================
+# SpringBoot 专用
+# ==============================
+*.log
+*.log.*
+logs/
+logs
+*.tmp
+
+# 配置文件（密码、密钥千万别传）
+application-dev.yml
+application-dev.properties
+application-dev.yaml
+application-local.yml
+application-local.yaml
+application-local.properties
+.env
+.env.*
+
+# 数据库备份（含真实用户数据，禁止上传）
+database_backup.sql
+
+# ==============================
+# IDE 自动生成文件（IntelliJ IDEA）
+# ==============================
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+.DS_Store
+
+# ==============================
+# 其他工具
+# ==============================
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
